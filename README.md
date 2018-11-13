@@ -1,0 +1,2 @@
+# lemonscript
+Script for lemonbar
