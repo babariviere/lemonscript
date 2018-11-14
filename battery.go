@@ -9,14 +9,14 @@ import (
 
 // Battery is a widget that fetch battery percentage
 type Battery struct {
-	path           string
-	perc           byte
-	prefix, suffix string
+	path   string
+	perc   byte
+	nested NestedWidget
 }
 
 // NewBattery creates a new battery widget
-func NewBattery(prefix, suffix string) Widget {
-	b := &Battery{prefix: prefix, suffix: suffix}
+func NewBattery(nested NestedWidget) Widget {
+	b := &Battery{nested: nested}
 	files, err := ioutil.ReadDir("/sys/class/power_supply")
 	if err != nil {
 		log.Fatal(err)
@@ -43,5 +43,5 @@ func (b *Battery) Update() error {
 
 // Draw to lemonbar
 func (b Battery) Draw() string {
-	return b.prefix + fmt.Sprint(b.perc) + b.suffix
+	return b.nested.DrawWith(fmt.Sprint(b.perc))
 }
