@@ -9,31 +9,37 @@ import (
 )
 
 var background = NewRGBA(41, 45, 62, 204)
+var focused = background
+var unfocused, _ = NewHex("#434758")
+var urgent, _ = NewHex("#f07178")
+
+var padding = NewPadding(10)
+
+var enableUnderline = NewText("%{+u}")
 
 var widgets = []Widget{
 	NewBackground(background),
 	NewI3(
 		NewCombined(
-			NewCombined(NewBackground(NewRGB(10, 10, 10)), NewPadding(2)),
-			NewPadding(2),
+			NewCombined(NewBackground(focused), padding),
+			padding,
 		),
 		NewCombined(
-			NewCombined(NewBackground(NewRGB(100, 100, 100)), NewPadding(2)),
-			NewPadding(2),
+			NewCombined(NewBackground(unfocused), padding),
+			padding,
 		),
-		NewCombined(
-			NewCombined(NewBackground(NewRGB(255, 0, 0)), NewPadding(2)),
-			NewPadding(2),
+		NewUnderline(
+			urgent,
 		),
 	),
 	NewBackground(background),
 	NewAlign(AlignCenter),
-	NewText("Hello World"),
-	NewPadding(2),
+	padding,
+	NewTime(),
+	padding,
 	NewAlign(AlignRight),
 	NewBattery(NewCombined(NewEmpty(), NewText("%"))),
-	NewPadding(2),
-	NewTime(),
+	padding,
 }
 
 func drawLoop() {

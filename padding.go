@@ -1,13 +1,13 @@
 package main
 
-import "strings"
+import "fmt"
 
 // Padding adds space between widgets
-type Padding string
+type Padding int
 
 // NewPadding creates a new padding
 func NewPadding(i int) Widget {
-	p := Padding(strings.Repeat(" ", i))
+	p := Padding(i)
 	return &p
 }
 
@@ -15,4 +15,4 @@ func NewPadding(i int) Widget {
 func (p *Padding) Update() error { return nil }
 
 // Draw draws to lemonbar
-func (p Padding) Draw() string { return string(p) }
+func (p Padding) Draw() string { return "%{O" + fmt.Sprint(int(p)) + "}" }

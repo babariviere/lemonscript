@@ -30,12 +30,13 @@ func NewHex(h string) (Color, error) {
 	if err != nil {
 		return c, err
 	}
-	if len(b) > 4 {
+	if len(b) >= 4 {
 		c.A = b[0]
 		c.R = b[1]
 		c.G = b[2]
 		c.B = b[3]
 	} else if len(b) == 3 {
+		c.A = 255
 		c.R = b[0]
 		c.G = b[1]
 		c.B = b[2]

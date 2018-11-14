@@ -4,7 +4,7 @@ package main
 type Background Color
 
 // NewBackground creates a new background
-func NewBackground(background Color) Widget {
+func NewBackground(background Color) *Background {
 	bg := Background(background)
 	return &bg
 }
@@ -15,11 +15,16 @@ func (b *Background) Update() error { return nil }
 // Draw draws to lemonbar
 func (b Background) Draw() string { return "%{B#" + Color(b).Hex() + "}" }
 
+// DrawWith set background for parent
+func (b Background) DrawWith(parent string) string {
+	return "%{B#" + Color(b).Hex() + "}" + parent + "%{B-}"
+}
+
 // Foreground set foreground color
 type Foreground Color
 
 // NewForeground creates a new foreground
-func NewForeground(foreground Color) Widget {
+func NewForeground(foreground Color) *Foreground {
 	fg := Foreground(foreground)
 	return &fg
 }
@@ -30,11 +35,16 @@ func (b *Foreground) Update() error { return nil }
 // Draw draws to lemonbar
 func (b Foreground) Draw() string { return "%{F#" + Color(b).Hex() + "}" }
 
+// DrawWith set forground for parent
+func (b Foreground) DrawWith(parent string) string {
+	return "%{F#" + Color(b).Hex() + "}" + parent + "%{F-}"
+}
+
 // Underline set underline color
 type Underline Color
 
 // NewUnderline creates a new underline
-func NewUnderline(underline Color) Widget {
+func NewUnderline(underline Color) *Underline {
 	ul := Underline(underline)
 	return &ul
 }
@@ -42,5 +52,10 @@ func NewUnderline(underline Color) Widget {
 // Update does nothing
 func (b *Underline) Update() error { return nil }
 
-// Draw draws to lemonbar
-func (b Underline) Draw() string { return "%{U#" + Color(b).Hex() + "}" }
+// Draw draws to lemonbar, use draw with instead (see Bind)
+func (b Underline) Draw() string { return "%{+u}%{U#" + Color(b).Hex() + "}" }
+
+// DrawWith underline parent
+func (b Underline) DrawWith(parent string) string {
+	return "%{+u}%{U#" + Color(b).Hex() + "}" + parent + "%{-u}"
+}
