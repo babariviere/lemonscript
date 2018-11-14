@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"runtime/pprof"
 	"time"
 )
 
@@ -33,18 +36,37 @@ var widgets = []Widget{
 	NewTime(),
 }
 
-func main() {
-	for {
-		var buf string
-		for _, widget := range widgets {
-			if err := widget.Update(); err != nil {
-				fmt.Println(err)
-				goto EndLoop
-			}
-			buf += widget.Draw()
+func drawLoop() {
+	var buf string
+	for _, widget := range widgets {
+		if err := widget.Update(); err != nil {
+			fmt.Println(err)
+			return
 		}
-		fmt.Println(buf)
-	EndLoop:
-		time.Sleep(1 * time.Second)
+		buf += widget.Draw()
+	}
+	fmt.Println(buf)
+}
+
+func cpuProfile() {
+	f, err := os.Create("cpu.prof")
+	if err != nil {
+		log.Fatal(err)
+	}
+	pprof.StartCPUProfile(f)
+	defer pprof.StopCPUProfile()
+	for i := 0; i < 10000; i++ {
+		drawLoop()
+	}
+}
+
+func main() {
+	if len(os.Args) > 1 && os.Args[1] == "cpu.prof" {
+		cpuProfile()
+		return
+	}
+	for {
+		drawLoop()
+		time.Sleep(500 * time.Millisecond)
 	}
 }

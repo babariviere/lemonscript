@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/mdirkse/i3ipc"
@@ -44,13 +45,16 @@ func (i *I3) Update() error {
 func (i I3) Draw() string {
 	var res string
 	for _, workspace := range i.workspaces {
+		var block string
+		clickable := NewClickable(fmt.Sprintf("i3-msg workspace %d", workspace.Num))
 		if workspace.Urgent {
-			res += i.urgent.DrawWith(workspace.Name)
+			block = i.urgent.DrawWith(workspace.Name)
 		} else if !workspace.Visible {
-			res += i.unfocused.DrawWith(workspace.Name)
+			block = i.unfocused.DrawWith(workspace.Name)
 		} else {
-			res += i.normal.DrawWith(workspace.Name)
+			block = i.normal.DrawWith(workspace.Name)
 		}
+		res += clickable.DrawWith(block)
 	}
 	return res
 }
