@@ -3,11 +3,11 @@ package main
 import "fmt"
 
 // Padding adds space between widgets
-type Padding int
+type Padding string
 
 // NewPadding creates a new padding
 func NewPadding(i int) Widget {
-	p := Padding(i)
+	p := Padding(fmt.Sprint(i))
 	return &p
 }
 
@@ -15,4 +15,4 @@ func NewPadding(i int) Widget {
 func (p *Padding) Update() error { return nil }
 
 // Draw draws to lemonbar
-func (p Padding) Draw() string { return "%{O" + fmt.Sprint(int(p)) + "}" }
+func (p Padding) Draw() string { return "%{O" + string(p) + "}" }

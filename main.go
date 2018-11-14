@@ -73,6 +73,6 @@ func main() {
 	}
 	for {
 		drawLoop()
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
