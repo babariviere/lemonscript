@@ -9,8 +9,8 @@ import (
 )
 
 var background = NewRGBA(41, 45, 62, 204)
-var focused = background
-var unfocused, _ = NewHex("#434758")
+var focused, _ = NewHex("#434758")
+var unfocused = background
 var urgent, _ = NewHex("#f07178")
 
 var padding = NewPadding(10)
@@ -38,6 +38,11 @@ var widgets = []Widget{
 	NewTime(),
 	padding,
 	NewAlign(AlignRight),
+	// Too much CPU usage for now
+	// TODO: introduce tick system
+	//NewCommand("playerctl", "metadata", "--format", "{{ artist }} - {{ album }} - {{ title }}"),
+	//padding,
+	// TODO: implements trigger system to get text under certain commands
 	NewBattery(NewCombined(NewEmpty(), NewText("%"))),
 	padding,
 }

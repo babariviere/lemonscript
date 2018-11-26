@@ -19,4 +19,4 @@ func (t *Time) Update() error {
 }
 
 // Draw draws time to widget
-func (t Time) Draw() string { return t.time.Format("15:04:05") }
+func (t Time) Draw() string { return t.time.Format("Mon 2 Jan 15:04:05") }
