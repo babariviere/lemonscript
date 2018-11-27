@@ -42,6 +42,10 @@ var widgets = []Widget{
 	NewAlign(AlignRight),
 	// Too much CPU usage for now
 	// TODO: introduce tick system
+	NewInterface("enp61s0"),
+	padding,
+	NewInterface("wlo1"),
+	padding,
 	mpd,
 	padding,
 	// TODO: implements trigger system to get text under certain commands
