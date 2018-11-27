@@ -17,6 +17,8 @@ var padding = NewPadding(10)
 
 var enableUnderline = NewText("%{+u}")
 
+var mpd, _ = NewMPD("127.0.0.1:6600")
+
 var widgets = []Widget{
 	NewBackground(background),
 	NewI3(
@@ -40,8 +42,8 @@ var widgets = []Widget{
 	NewAlign(AlignRight),
 	// Too much CPU usage for now
 	// TODO: introduce tick system
-	//NewCommand("playerctl", "metadata", "--format", "{{ artist }} - {{ album }} - {{ title }}"),
-	//padding,
+	mpd,
+	padding,
 	// TODO: implements trigger system to get text under certain commands
 	NewBattery(NewCombined(NewEmpty(), NewText("%"))),
 	padding,
