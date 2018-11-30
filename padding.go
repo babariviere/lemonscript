@@ -11,8 +11,5 @@ func NewPadding(i int) Widget {
 	return &p
 }
 
-// Update does nothing
-func (p *Padding) Update() error { return nil }
-
 // Draw draws to lemonbar
 func (p Padding) Draw() string { return "%{O" + string(p) + "}" }

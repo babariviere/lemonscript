@@ -9,8 +9,5 @@ func NewText(text string) Widget {
 	return &t
 }
 
-// Update does nothing
-func (t *Text) Update() error { return nil }
-
 // Draw draws text to lemonbar
 func (t Text) Draw() string { return string(t) }

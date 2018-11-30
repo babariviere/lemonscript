@@ -8,6 +8,8 @@ import (
 	"go.i3wm.org/i3"
 )
 
+var _ Updatable = (*I3)(nil)
+
 // I3 widget
 type I3 struct {
 	mutex      *sync.Mutex
@@ -15,6 +17,7 @@ type I3 struct {
 	focused    NestedWidget
 	unfocused  NestedWidget
 	urgent     NestedWidget
+	redraw     bool
 }
 
 // updates structure from workspace event
@@ -24,6 +27,7 @@ func registerI3(widget *I3) {
 		widget.mutex.Lock()
 		_ = eventReceiver.Event().(*i3.WorkspaceEvent)
 		widget.workspaces, _ = i3.GetWorkspaces()
+		widget.redraw = true
 		widget.mutex.Unlock()
 	}
 }
@@ -40,8 +44,17 @@ func NewI3(focused, unfocused, urgent NestedWidget) *I3 {
 }
 
 // Update updates i3 workspaces
-func (i *I3) Update() error {
-	return nil
+func (i *I3) Update() (bool, error) {
+	if i.redraw {
+		i.redraw = false
+		return true, nil
+	}
+	return false, nil
+}
+
+// Tick return i3 tick
+func (i I3) Tick() uint {
+	return 1
 }
 
 // Draw draws to lemonbar

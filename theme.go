@@ -9,9 +9,6 @@ func NewBackground(background Color) *Background {
 	return &bg
 }
 
-// Update does nothing
-func (b *Background) Update() error { return nil }
-
 // Draw draws to lemonbar
 func (b Background) Draw() string { return "%{B#" + Color(b).Hex() + "}" }
 
@@ -29,9 +26,6 @@ func NewForeground(foreground Color) *Foreground {
 	return &fg
 }
 
-// Update does nothing
-func (b *Foreground) Update() error { return nil }
-
 // Draw draws to lemonbar
 func (b Foreground) Draw() string { return "%{F#" + Color(b).Hex() + "}" }
 
@@ -48,9 +42,6 @@ func NewUnderline(underline Color) *Underline {
 	ul := Underline(underline)
 	return &ul
 }
-
-// Update does nothing
-func (b *Underline) Update() error { return nil }
 
 // Draw draws to lemonbar, use draw with instead (see Bind)
 func (b Underline) Draw() string { return "%{+u}%{U#" + Color(b).Hex() + "}" }

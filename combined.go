@@ -1,5 +1,9 @@
 package main
 
+import "math"
+
+var _ Updatable = (*Combined)(nil)
+
 // Combined is a widget that combine 2 widget
 type Combined struct {
 	prefix, suffix Widget
@@ -11,14 +15,39 @@ func NewCombined(prefix, suffix Widget) *Combined {
 }
 
 // Update updates nested widgets
-func (c *Combined) Update() error {
-	if err := c.prefix.Update(); err != nil {
-		return err
+func (c *Combined) Update() (res bool, err error) {
+	if prefix, ok := c.prefix.(Updatable); ok {
+		res, err = prefix.Update()
+		if err != nil {
+			return
+		}
 	}
-	if err := c.suffix.Update(); err != nil {
-		return err
+	if suffix, ok := c.suffix.(Updatable); ok {
+		var newres bool
+		newres, err = suffix.Update()
+		if err != nil {
+			return
+		}
+		if newres {
+			res = newres
+		}
 	}
-	return nil
+	return
+}
+
+// Tick refresh rate for combined
+func (c Combined) Tick() (rate uint) {
+	rate = math.MaxUint32
+	if prefix, ok := c.prefix.(Updatable); ok {
+		rate = prefix.Tick()
+	}
+	if suffix, ok := c.prefix.(Updatable); ok {
+		srate := suffix.Tick()
+		if srate < rate {
+			rate = srate
+		}
+	}
+	return
 }
 
 // Draw draws to lemonbar

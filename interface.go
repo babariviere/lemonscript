@@ -4,6 +4,8 @@ import (
 	"net"
 )
 
+var _ Updatable = (*NetInterface)(nil)
+
 // NetInterface is a widget displaying net interface settings
 type NetInterface struct {
 	name string
@@ -17,24 +19,35 @@ func NewInterface(name string) Widget {
 }
 
 // Update updates interface info
-func (i *NetInterface) Update() error {
+func (i *NetInterface) Update() (bool, error) {
 	ni, err := net.InterfaceByName(i.name)
 	if err != nil {
-		return err
+		return false, err
 	}
-	i.up = ni.Flags&net.FlagUp == net.FlagUp
-	if i.up {
+	var addr string
+	up := ni.Flags&net.FlagUp == net.FlagUp
+	if up {
 		addrs, err := ni.Addrs()
 		if err != nil {
-			return err
+			return false, err
 		}
 		if len(addrs) == 0 {
-			i.addr = "not connected"
+			addr = "not connected"
 		} else {
-			i.addr = addrs[0].String()
+			addr = addrs[0].String()
 		}
 	}
-	return nil
+	if addr != i.addr || up != i.up {
+		i.addr = addr
+		i.up = up
+		return true, nil
+	}
+	return false, nil
+}
+
+// Tick refresh rate for interface
+func (i NetInterface) Tick() uint {
+	return 60
 }
 
 // Draw draws to lemonbar

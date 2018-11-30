@@ -10,9 +10,6 @@ func NewClickable(action string) *Clickable {
 	return &Clickable{action: action}
 }
 
-// Update does nothing
-func (c *Clickable) Update() error { return nil }
-
 // Draw does nothing
 func (c Clickable) Draw() string { return "" }
 

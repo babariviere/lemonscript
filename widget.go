@@ -1,11 +1,19 @@
 package main
 
+var _ Updatable = (*Bind)(nil)
+
 // Widget is a lemonbar widget that is renderable
 type Widget interface {
-	// Update is called before Draw, it is used to update values
-	Update() error
 	// Draw is called to draw text, takes parent widget if any
 	Draw() string
+}
+
+// Updatable is a widget that needs to update values
+type Updatable interface {
+	// Update is called before Draw, it is used to update values
+	Update() (bool, error)
+	// Tick returns tick rate
+	Tick() uint
 }
 
 // NestedWidget is a widget that can have optional result
@@ -20,9 +28,6 @@ type Empty struct{}
 
 // NewEmpty creates a new empty Widget
 func NewEmpty() Widget { return &Empty{} }
-
-// Update does nothing
-func (e Empty) Update() error { return nil }
 
 // Draw does nothing
 func (e Empty) Draw() string { return "" }
@@ -42,14 +47,35 @@ func NewBind(parent Widget, nested NestedWidget) *Bind {
 }
 
 // Update updates all widgets
-func (b *Bind) Update() error {
-	if err := b.parent.Update(); err != nil {
-		return err
+func (b *Bind) Update() (res bool, err error) {
+	if parent, ok := b.parent.(Updatable); ok {
+		res, err = parent.Update()
+		if err != nil {
+			return
+		}
 	}
-	if err := b.nested.Update(); err != nil {
-		return err
+	if nested, ok := b.nested.(Updatable); ok {
+		var newres bool
+		newres, err = nested.Update()
+		if err != nil {
+			return
+		}
+		if newres {
+			res = true
+		}
 	}
-	return nil
+	return
+}
+
+// Tick return ticks
+func (b Bind) Tick() uint {
+	if parent, ok := b.parent.(Updatable); ok {
+		return parent.Tick()
+	}
+	if nested, ok := b.nested.(Updatable); ok {
+		return nested.Tick()
+	}
+	return 0
 }
 
 // Draw draws to lemonbar

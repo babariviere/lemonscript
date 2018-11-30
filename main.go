@@ -53,16 +53,35 @@ var widgets = []Widget{
 	padding,
 }
 
+var tick uint
+
 func drawLoop() {
-	var buf string
+	tick++
+	var redraw bool
 	for _, widget := range widgets {
-		if err := widget.Update(); err != nil {
-			fmt.Println(err)
-			return
+		if wid, ok := widget.(Updatable); ok {
+			widtick := wid.Tick()
+			if tick%widtick != 0 || widtick == 0 {
+				continue
+			}
+			rd, err := wid.Update()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			if rd {
+				redraw = true
+			}
 		}
-		buf += widget.Draw()
 	}
-	fmt.Println(buf)
+	if redraw {
+		var buf string
+		//buf += fmt.Sprint("tick: ", tick, " ")
+		for _, widget := range widgets {
+			buf += widget.Draw()
+		}
+		fmt.Println(buf)
+	}
 }
 
 func cpuProfile() {

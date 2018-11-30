@@ -4,6 +4,8 @@ import (
 	gompd "github.com/fhs/gompd/mpd"
 )
 
+var _ Updatable = (*MPD)(nil)
+
 // MPD services
 type MPD struct {
 	client *gompd.Client
@@ -18,13 +20,26 @@ func NewMPD(addr string) (Widget, error) {
 }
 
 // Update fetch music status
-func (m *MPD) Update() (err error) {
-	m.status, err = m.client.Status()
+func (m *MPD) Update() (redraw bool, err error) {
+	var status, song gompd.Attrs
+	status, err = m.client.Status()
 	if err != nil {
 		return
 	}
-	m.song, err = m.client.CurrentSong()
+	song, err = m.client.CurrentSong()
+	if song["Artist"] != m.song["Artist"] ||
+		song["Title"] != m.song["Title"] ||
+		status["state"] != m.status["state"] {
+		redraw = true
+		m.song = song
+		m.status = status
+	}
 	return
+}
+
+// Tick refresh rate for mpd
+func (m MPD) Tick() uint {
+	return 10
 }
 
 // Draw draws to lemonbar

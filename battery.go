@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var _ Updatable = (*Battery)(nil)
+
 // Battery is a widget that fetch battery percentage
 type Battery struct {
 	path   string
@@ -32,13 +34,23 @@ func NewBattery(nested NestedWidget) Widget {
 }
 
 // Update fetch battery percentage
-func (b *Battery) Update() error {
+func (b *Battery) Update() (bool, error) {
 	content, err := ioutil.ReadFile(b.path)
 	if err != nil {
-		return err
+		return false, err
 	}
-	fmt.Sscan(string(content), &b.perc)
-	return nil
+	var perc byte
+	fmt.Sscan(string(content), &perc)
+	if b.perc != perc {
+		b.perc = perc
+		return true, nil
+	}
+	return false, nil
+}
+
+// Tick return battery tick
+func (b Battery) Tick() uint {
+	return 10
 }
 
 // Draw to lemonbar
